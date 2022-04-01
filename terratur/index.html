@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Terratur: reserva viajes y experiencias en todo Colombia</title>
+        <link rel="icon" type="image/x-icon" href="faviconV2.png" />
+       
+        <!-- Font Awesome icons (free version)-->
+        
+        <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
+    </head>
+    <style> 
+    .modalDialog {
+	position: fixed;
+	font-family: Arial, Helvetica, sans-serif;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0,0,0,0.8);
+	z-index: 99999;
+	opacity:0;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+	pointer-events: none;
+}
+.modalDialog:target {
+	opacity:1;
+	pointer-events: auto;
+}
+.modalDialog > div {
+	width: 400px;
+	position: relative;
+	margin: 10% auto;
+	padding: 5px 20px 13px 20px;
+	border-radius: 10px;
+	background: #fff;
+	background: -moz-linear-gradient(#fff, #999);
+	background: -webkit-linear-gradient(#fff, #999);
+	background: -o-linear-gradient(#fff, #999);
+  -webkit-transition: opacity 400ms ease-in;
+-moz-transition: opacity 400ms ease-in;
+transition: opacity 400ms ease-in;
+}
+.close {
+	background: #606061;
+	color: #FFFFFF;
+	line-height: 25px;
+	position: absolute;
+	right: -12px;
+	text-align: center;
+	top: -10px;
+	width: 24px;
+	text-decoration: none;
+	font-weight: bold;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+	-moz-box-shadow: 1px 1px 3px #000;
+	-webkit-box-shadow: 1px 1px 3px #000;
+	box-shadow: 1px 1px 3px #000;
+}
+.close:hover { background: #00d9ff; }
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /*-------------------------------------------------*/
+  /* Parent wrapper to carousel. Width can be changed as needed. */
+.carousel-wrapper {
+  overflow: hidden;
+  width: 80%;
+  margin: auto;
+}
+
+/* Apply 'border-box' to 'box-sizing' so border and padding is included in the width and height. */
+.carousel-wrapper * {
+  box-sizing: border-box;
+}
+
+/* We'll be using the 'transform' property to move the carousel's items, so setting the 'transform-style' to 'preserve-3d' will make sure our nested elements are rendered properly in the 3D space. */
+.carousel {
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+/* By default we're hiding items (except the initial one) until the JS initiates. Elements are absolutely positioned with a width of 100% (as we're styling for mobile first), letting the content's height dictate the height of the carousel. Our magic property here for all our animation needs is 'transition', taking the properties we wish to animate 'transform' and 'opacity', along with the length of time in seconds. */
+.carousel__photo {
+  opacity: 0;
+  position: absolute;
+  top:0;
+  width: 100%;
+  margin: auto;
+  padding: 1rem 4rem;
+  z-index: 100;
+  transition: transform .5s, opacity .5s, z-index .5s;
+}
+
+/* Display the initial item and bring it to the front using 'z-index'. These styles also apply to the 'active' item. */
+.carousel__photo.initial,
+.carousel__photo.active {
+  opacity: 1;
+  position: relative;
+  z-index: 900;
+}
+
+/* Set 'z-index' to sit behind our '.active' item. */
+.carousel__photo.prev,
+.carousel__photo.next {
+  z-index: 800;
+}
+
+/* Translate previous item to the left */
+.carousel__photo.prev {
+  transform: translateX(-100%);
+}
+
+/* Translate next item to the right */
+.carousel__photo.next {
+  transform: translateX(100%);
+}
+
+/* Style navigation buttons to sit in the middle, either side of the carousel. */
+.carousel__button--prev,
+.carousel__button--next {
+  position: absolute;
+  top:50%;
+  width: 3rem;
+  height: 3rem;
+  background-color: #FFF;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  cursor: pointer; 
+  z-index: 1001; /* Sit on top of everything */
+  border:1px solid black;
+/*  opacity: 0;  Hide buttons until carousel is initialised 
+  transition:opacity 1s;*/
+}
+
+.carousel__button--prev {
+  left:0;
+}
+
+.carousel__button--next {
+  right:0;
+}
+
+/* Use pseudo elements to insert arrows inside of navigation buttons */
+.carousel__button--prev::after,
+.carousel__button--next::after {
+  content: " ";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 54%;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  transform: translate(-50%, -50%) rotate(135deg);
+}
+
+.carousel__button--next::after {
+  left: 47%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+@import url('https://fonts.googleapis.com/css?family=PT+Mono|PT+Sans');
+
+:root {
+  --color-primary: hsl(203, 100%, 38%);
+  --color-text:  hsl(203, 30%, 15%);
+  --color-background: hsl(203, 100%, 98%);
+  --color-border: hsl(203, 33%, 83%);;
+  --color-white: #fff;
+}
+
+
+
+.table {
+  background-color: var(--color-white);
+  width: 100%;
+  border-radius: 4px;
+  border-collapse: collapse;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 67, 115, 0.2);
+}
+
+.table__header {
+  text-transform: uppercase;
+  font-weight: normal;
+  font-size: 0.75rem;
+}
+
+.table__link {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.table__row {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table__row--last {
+  border-bottom: 0;
+}
+
+.table__cell {
+  padding: 1rem 1.5rem;
+}
+
+.u-text-left {
+  text-align: left;
+}
+
+.u-text-right {
+  text-align: right;
+}
+
+.u-text-center {
+  text-align: center;
+}
+
+.u-font-mono {
+  font-family: 'PT Mono', monospace;
+}
+
+
+
+@media only screen and (max-width: 650px) {
+
+  html {
+    font-size: 14px;
+  }
+
+  .table__header {
+    display: none;
+  }
+
+  .table__row {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .table__cell {
+    padding: 0;
+  }
+
+  .table__account {
+    grid-column: 1;
+    grid-row: span 2;
+  }
+
+  .table__account-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table__account-number {
+    order: 2;
+    font-size: 12px;
+    padding-top: 0.25rem;
+  }
+
+  .table__balance {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 0.75rem;
+    padding-top: 0.125rem;
+  }
+
+  .table__balance::before {
+    content: "Balance: ";
+  }
+
+  .table__available {
+    grid-column: 2;
+    grid-row: 1;
+    padding-bottom: 0.125rem;
+  }
+
+  .table__limit {
+    display: none;
+  }
+
+  .table__transfer {
+    grid-column: 3;
+    grid-row: span 2;
+  }
+}
+.text-center {
+  text-align: center;
+}
+
+
+    
+    </style>
+
+  
+    <body id="page-top">
+      <div id="openModal" class="table__wrap modalDialog">
+      
+        <table class="table">
+          <thead class="table__header">
+            <tr class="table__row">
+              <th class="table__cell u-text-left">Asesor</th>
+              <th class="table__cell u-text-right">TIEMPO DE RESPUESTA</th>
+              
+              <th class="table__cell u-text-right">Estado</th>
+              <th><a class="btn" href="#close">CERRAR</a></th>
+             
+            </tr>
+          </thead>
+         
+          <tbody>
+      
+            <tr class="table__row">
+              <td class="table__account table__cell">
+                <b> <span class="table__account-number">ALFONSO QUEZADA</span> </b>
+                
+              </td>
+              <td class="table__balance table__cell u-text-right u-font-mono"><span class="num_negative"> 5 MINUTOS </span></td>
+              
+              <td class="table__available table__cell u-text-right u-font-mono">ACTIVO</td>
+              <td class="table__transfer table__cell u-text-center"><img src="https://clientes.dongee.com/whatsapp.png" width="64" height="64" alt="Whatsapp" onclick="window.location.href='https://wa.me/+573027125213'"></td>
+            </tr>
+      
+            <tr class="table__row">
+              <td class="table__account table__cell">
+               <b> <span class="table__account-number">LUISA PEREZ</span></b>
+              </td>
+              <td class="table__balance table__cell u-text-right u-font-mono"><span class="num_negative">5 MINUTOS</span></td>
+              <td class="table__limit table__cell u-text-right u-font-mono">INACTIVO</td>
+              <td class="table__transfer table__cell u-text-center"><img src="https://clientes.dongee.com/whatsapp.png" width="64" height="64" alt="Whatsapp" onclick="window.location.href='https://wa.me/+573027125213'"></td>
+              <td class="table__transfer table__cell u-text-center">  </td>
+            </tr>
+      
+            <tr class="table__row">
+              <td class="table__account table__cell">
+                <b>  <span class="table__account-number">SEBASTIAN ACOSTA</span></b>
+              </td>
+              <td class="table__balance table__cell u-text-right u-font-mono"><span class="num_negative"> 5 MINUTOS </span></td>
+              <td class="table__limit table__cell u-text-right u-font-mono">ACTIVO</td>
+              <td class="table__transfer table__cell u-text-center"><img src="https://clientes.dongee.com/whatsapp.png" width="64" height="64" alt="Whatsapp" onclick="window.location.href='https://wa.me/+573027148258'"></td>
+              
+            </tr>
+      
+          </tbody>
+      
+          
+        </table>
+      </div>
+    
+      <img class="btn-whatsapp" src="https://clientes.dongee.com/whatsapp.png" width="64" height="64" alt="Whatsapp"  onclick="window.location.href='#openModal'">
+      
+      <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container px-4 px-lg-5">
+              <div class="site-branding tagline-position-below">
+                <p class="site-title"><a href="#page-top" class="custom-logo-link" rel="home" aria-current="page"><img width="125" height="37" src="https://terraturviajes.com/wp-content/uploads/2020/11/cropped-cropped-Logo-Terratur-1-2.png?is-pending-load=1" class="custom-logo jetpack-lazy-image entered lazyloaded jetpack-lazy-image--handled" alt="Terratur viajes" data-attachment-id="12005" data-permalink="https://terraturviajes.com/cropped-cropped-logo-terratur-1-2-png/" data-orig-file="https://terraturviajes.com/wp-content/uploads/2020/11/cropped-cropped-Logo-Terratur-1-2.png" data-orig-size="125,37" data-comments-opened="0" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="cropped-cropped-Logo-Terratur-1-2.png" data-image-description="<p>https://terraturviajes.com/wp-content/uploads/2020/11/cropped-cropped-Logo-Terratur-1-2.png</p>
+" data-image-caption="" data-medium-file="https://terraturviajes.com/wp-content/uploads/2020/11/cropped-cropped-Logo-Terratur-1-2.png" data-large-file="https://terraturviajes.com/wp-content/uploads/2020/11/cropped-cropped-Logo-Terratur-1-2.png" data-ll-status="loaded" data-lazy-loaded="1" loading="eager"></a></p>
+              </div>
+                
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#about">EXPERIENCIAS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#projects">VIAJES</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#signup">RNT</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h1 class="mx-auto my-0 text-uppercase">TERRATUR</h1>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-5">Únete a nuestra comunidad de viajeros!Conoce todos los beneficios que tenemos para ti al ser parte de nuestra comunidad de viajeros.
+
+                          Exploremos juntos Colombia.</h2>
+                        <a class="btn btn-primary" href="#projects">VIAJA AHORA!</a>
+                        
+                        
+                      </div>
+                </div>
+            </div>
+        </header>
+        <!-- About-->
+        <section class="about-section text-center" id="about">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="text-white mb-4">Viajes y experiencias en todo Colombia</h2>
+                        <p class="text-white-50">
+                          Disfruta de las mejores experiencias junto a nuestros expertos locales.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="carousel-wrapper">
+                  <div class="carousel">
+                
+                    <img class="carousel__photo initial" src="https://www.eje21.com.co/site/wp-content/uploads/2019/04/Avistamiento-de-aves-Risaralda.-Foto-Gobernaci%C3%B3n..jpg">
+                    <img class="carousel__photo" src="https://cdn.baquianos.com/img/blog/2021/6/eje-cafetero-5-uwpx640.jpg">
+                    <img class="carousel__photo" src="https://vivex.com.co/wp-content/uploads/2020/07/Qu%C3%A9-hacer-en-Eje-Cafetero-830x467.jpg">
+                    <img class="carousel__photo" src="https://www.eluniversal.com.co/sites/default/files/201201/imagen/castillo_de_san_felipe.jpg">
+                    <img class="carousel__photo" src="https://www.lasrutasdeisa.com/wp-content/uploads/2018/11/1511-2018-072862413722184247261-1440x1080.jpg">
+                    
+                    <div class="carousel__button--next"></div>
+                    <div class="carousel__button--prev"></div>
+                
+                  </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Projects-->
+        <section class="projects-section bg-light" id="projects">
+            <div class="container px-4 px-lg-5">
+                <!-- Featured Project Row-->
+                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="https://terraturviajes.com/wp-content/uploads/2021/01/Centro-Historico-Cartagena-Terratur-viajes-5.jpg" alt="..." /></div>
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="featured-text text-center text-lg-left">
+                            <h4>Viajes mas populares</h4>
+                            <h3>Cartagena</h3>
+                            <p class="text-black-50 mb-0">La “Ciudad Heroica” como es conocida Cartagena. Ubicada en la costa caribeña, junto al mar, se encuentra la Ciudad Vieja amurallada, fundada en el siglo XVI, con plazas, calles de adoquines y edificios coloniales coloridos. <br>  </p>
+                            <br>
+                            <a  class="btn btn-primary" href="cartagena.html">VIAJA AHORA!</a>
+                          </div>
+                    </div>
+                </div>
+                <!-- Project One Row-->
+                
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="https://terraturviajes.com/wp-content/uploads/2020/12/Termales-de-Santa-Rosa-de-Cabal-Terratur-viajes-2.jpg" alt="..." /></div>
+                    <div class="col-lg-6">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white">Escape Eje Cafetero</h4>
+                                    <p class="mb-0 text-white-50">En este tour conocerás los espacios turísticos más representativos del eje cafetero, su arquitectura colorida y paisajes que deslumbran con su belleza como el Valle del Cocora con sus palmas de cera y las Termales de Santa rosa de Cabal, siendo las termales más tradicionales de Colombia; recorre el Parque del Café el cual dispone de 40 atracciones que se dividen en: mecánicas, acuáticas y temáticas, despertando la cultura destinada a la preservación del patrimonio cultural.</p>
+                                    <a  class="btn btn-primary" href="ejecafetero.html">VIAJA AHORA!</a>
+                                    <hr class="d-none d-lg-block mb-0 ms-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Two Row-->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="https://www.colombiatudestino.com/viajes/wp-content/uploads/2018/03/guajira.jpg" alt="..." /></div>
+                    <div class="col-lg-6 order-lg-first">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-right">
+                                    <h4 class="text-white">Guajira 5 Dias</h4>
+                                    <p class="mb-0 text-white-50">Experiencias de conexión cultural a los viajeros con La Guajira, explorando lugares vírgenes, diversos y de significado cultural para Colombia. Con el apoyo de la comunidad Compartimos las vivencias, historias, formas de vida, mitos y leyendas que hacen parte de su día a día, aportando de esta forma a su autosostenibilidad. Se caracteriza por sus paisajes desérticos, gigantescas dunas de arena, lindas playas, aldeas pesqueras y los ranchos remotos del pueblo indígena wayúu.</p>
+                                    <a  class="btn btn-primary" href="guajira.html">VIAJA AHORA!</a>
+                                    <hr class="d-none d-lg-block mb-0 me-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Signup-->
+        <section class="signup-section" id="signup">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-md-10 col-lg-8 mx-auto text-center">
+                        
+                        <h2 class="text-white mb-5">Registro Nacional de Turismo</h2>
+                       
+                        <form class="form-signup" id="contactForm" data-sb-form-api-token="API_TOKEN">
+                            <!-- Email address input-->
+                            <div class="row input-group-newsletter">
+                                <div class="col"><img  class="img-fluid mb-3 mb-lg-0" src="RNT-RCB-N°-91733-1024x725.jpg" alt="..." />
+                                  
+                                  </div>
+                                <div class="col-auto"><a  class="btn btn-primary" id="myBtn">Ver Completo!</a></div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="myModal" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <img  class="" src="RNT-RCB-N°-91733-1024x725.jpg" alt="..." />
+              </div>
+            
+            </div>
+        </section>
+        <!-- Contact-->
+        <section class="contact-section bg-black">
+            
+                    
+                    
+                </div>
+                <div class="social d-flex justify-content-center">
+                   
+                    <a class="mx-2" href="#!"><i class="fab fa-facebook-f"></i></a>
+                    
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; TERRATUR 2022</div></footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+        <script>
+          // Get the modal
+          var modal = document.getElementById("myModal");
+          
+          // Get the button that opens the modal
+          var btn = document.getElementById("myBtn");
+          
+          // Get the <span> element that closes the modal
+          var span = document.getElementsByClassName("close")[0];
+          
+          // When the user clicks the button, open the modal 
+          btn.onclick = function() {
+            modal.style.display = "block";
+          }
+          
+          // When the user clicks on <span> (x), close the modal
+          span.onclick = function() {
+            modal.style.display = "none";
+          }
+          
+          // When the user clicks anywhere outside of the modal, close it
+          window.onclick = function(event) {
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          }
+
+          !(function(d){
+  // Variables to target our base class,  get carousel items, count how many carousel items there are, set the slide to 0 (which is the number that tells us the frame we're on), and set motion to true which disables interactivity.
+  var itemClassName = "carousel__photo";
+      items = d.getElementsByClassName(itemClassName),
+      totalItems = items.length,
+      slide = 0,
+      moving = true; 
+
+  // To initialise the carousel we'll want to update the DOM with our own classes
+  function setInitialClasses() {
+
+    // Target the last, initial, and next items and give them the relevant class.
+    // This assumes there are three or more items.
+    items[totalItems - 1].classList.add("prev");
+    items[0].classList.add("active");
+    items[1].classList.add("next");
+  }
+
+  // Set click events to navigation buttons
+
+  function setEventListeners() {
+    var next = d.getElementsByClassName('carousel__button--next')[0],
+        prev = d.getElementsByClassName('carousel__button--prev')[0];
+
+    next.addEventListener('click', moveNext);
+    prev.addEventListener('click', movePrev);
+  }
+
+  // Disable interaction by setting 'moving' to true for the same duration as our transition (0.5s = 500ms)
+  function disableInteraction() {
+    moving = true;
+
+    setTimeout(function(){
+      moving = false
+    }, 500);
+  }
+
+  function moveCarouselTo(slide) {
+
+    // Check if carousel is moving, if not, allow interaction
+    if(!moving) {
+
+      // temporarily disable interactivity
+      disableInteraction();
+
+      // Preemptively set variables for the current next and previous slide, as well as the potential next or previous slide.
+      var newPrevious = slide - 1,
+          newNext = slide + 1,
+          oldPrevious = slide - 2,
+          oldNext = slide + 2;
+
+      // Test if carousel has more than three items
+      if ((totalItems - 1) > 3) {
+
+        // Checks if the new potential slide is out of bounds and sets slide numbers
+        if (newPrevious <= 0) {
+          oldPrevious = (totalItems - 1);
+        } else if (newNext >= (totalItems - 1)){
+          oldNext = 0;
+        }
+
+        // Check if current slide is at the beginning or end and sets slide numbers
+        if (slide === 0) {
+          newPrevious = (totalItems - 1);
+          oldPrevious = (totalItems - 2);
+          oldNext = (slide + 1);
+        } else if (slide === (totalItems -1)) {
+          newPrevious = (slide - 1);
+          newNext = 0;
+          oldNext = 1;
+        }
+
+        // Now we've worked out where we are and where we're going, by adding and removing classes, we'll be triggering the carousel's transitions.
+
+        // Based on the current slide, reset to default classes.
+        items[oldPrevious].className = itemClassName;
+        items[oldNext].className = itemClassName;
+
+        // Add the new classes
+        items[newPrevious].className = itemClassName + " prev";
+        items[slide].className = itemClassName + " active";
+        items[newNext].className = itemClassName + " next";
+      }
+    }
+  }
+
+  // Next navigation handler
+  function moveNext() {
+
+    // Check if moving
+    if (!moving) {
+
+      // If it's the last slide, reset to 0, else +1
+      if (slide === (totalItems - 1)) {
+        slide = 0;
+      } else {
+        slide++;
+      }
+
+      // Move carousel to updated slide
+      moveCarouselTo(slide);
+    }
+  }
+
+  // Previous navigation handler
+  function movePrev() {
+
+    // Check if moving
+    if (!moving) {
+
+      // If it's the first slide, set as the last slide, else -1
+      if (slide === 0) {
+        slide = (totalItems - 1);
+      } else {
+        slide--;
+      }
+
+      // Move carousel to updated slide
+      moveCarouselTo(slide);
+    }
+  }
+
+  // Initialise carousel
+  function initCarousel() {
+    setInitialClasses();
+    setEventListeners();
+
+    // Set moving to false now that the carousel is ready
+    moving = false;
+  }
+
+  // make it rain
+  initCarousel();
+
+}(document));
+          </script>
+    </body>
+</html>
